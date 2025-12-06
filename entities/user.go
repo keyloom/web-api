@@ -1,15 +1,20 @@
 package entities
 
-import "github.com/keyloom/web-api/core"
+import (
+	"github.com/keyloom/web-api/core"
+)
 
 type User struct {
 	core.Entity `bson:",inline"`
-	Username    string `bson:"username"`
-	Email       string `bson:"email"`
-	Password    string `bson:"password"`
+	Email       string `bson:"email,email"`
+	Password    string `bson:"password,containsany=uppercase,containsany=lowercase,containsany=numeric,min=8"`
 }
 
 var _ core.IEntity = (*User)(nil)
+
+func (u *User) CollectionName() string {
+	return "users"
+}
 
 func (u *User) CreateNewEntity() *core.Entity {
 	// Placeholder implementation
@@ -38,4 +43,29 @@ func (u *User) SaveOne(entity *core.Entity) error {
 func (u *User) SaveMany(entities []*core.Entity) error {
 	// Placeholder implementation
 	return nil
+}
+
+// Hashes and sets the user's password
+func (u *User) SetPassword(password string) error {
+	// Hash the password before storing it
+	hasher := core.Hasher{}
+	hashedPassword, err := hasher.Hash(password)
+	if err != nil {
+		return err
+	}
+
+	// Set the hashed password
+	u.Password = hashedPassword
+	return nil
+}
+
+// Compares the given password with the stored hashed password
+func (u *User) CheckPassword(password string) bool {
+	hasher := core.Hasher{}
+	return hasher.Compare(u.Password, password)
+}
+
+// Sets the user's email
+func (u *User) SetEmail(email string) {
+	u.Email = email
 }

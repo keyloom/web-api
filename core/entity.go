@@ -7,6 +7,7 @@ type Entity struct {
 }
 
 type IEntity interface {
+	CollectionName() string
 	CreateNewEntity() *Entity
 	LoadByID(id string) *Entity
 	LoadByIDs(ids []string) []*Entity
