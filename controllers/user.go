@@ -20,6 +20,15 @@ func (uc *UserController) RegisterRoutes(engine *gin.Engine) {
 	}
 }
 
+// @Summary Create a new user
+// @Param body body user_dtos.CreateUserDTO true "User creation data"
+// @Description Create a new user with the provided email and password
+// @Accept json
+// @Produce json
+// @Success 200 {object} entities.User
+// @Failure 400 {object} gin.H
+// @Failure 500 {object} gin.H
+// @Router /users/ [post]
 func (uc *UserController) CreateHandler(c *gin.Context) {
 	var dto user_dtos.CreateUserDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
