@@ -1,0 +1,58 @@
+definitions:
+  entities.User:
+    properties:
+      createdAt:
+        type: integer
+      email:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      updatedAt:
+        type: integer
+    type: object
+  user_dtos.CreateUserDTO:
+    properties:
+      confirm_password:
+        type: string
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - confirm_password
+    - email
+    - password
+    type: object
+info:
+  contact: {}
+paths:
+  /users/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the provided email and password
+      parameters:
+      - description: User creation data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user_dtos.CreateUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a new user
+swagger: "2.0"
