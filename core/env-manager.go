@@ -57,3 +57,28 @@ func (e *EnvManager) GetMongoConfig() (envmanager_dtos.MongoConfig, error) {
 	}
 	return mongoConfig, nil
 }
+
+func (e *EnvManager) GetTokenConfig() (envmanager_dtos.TokenConfig, error) {
+	vars := []string{
+		"TOKEN_SECRET_KEY",
+		"TOKEN_ISSUER",
+		"TOKEN_AUDIENCE",
+		"TOKEN_DURATION",
+	}
+	values, err := e.ValidateEnvs(vars)
+	if err != nil {
+		return envmanager_dtos.TokenConfig{}, err
+	}
+
+	// Convert TOKEN_DURATION to int
+	var duration int
+	fmt.Sscanf(values[3], "%d", &duration)
+
+	tokenConfig := envmanager_dtos.TokenConfig{
+		SecretKey:     values[0],
+		Issuer:        values[1],
+		Audience:      values[2],
+		TokenDuration: duration,
+	}
+	return tokenConfig, nil
+}
