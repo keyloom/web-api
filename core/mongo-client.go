@@ -3,7 +3,6 @@ package core
 import (
 	"context"
 	"fmt"
-	"log"
 	"os"
 
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -36,31 +35,14 @@ func NewMongoClient() *MongoClient {
 	}
 }
 
-func validateEnvVariables(vars []string) {
-	for _, v := range vars {
-		if os.Getenv(v) == "" {
-			log.Fatalf("You must set your '%s' environment variable.", v)
-		}
-	}
-}
-
 func buildMongoURI() string {
-	validateEnvVariables([]string{
-		"MONGODB_HOST",
-		"MONGODB_PORT",
-		"MONGODB_DB",
-		"MONGODB_USER",
-		"MONGODB_PASSWORD",
-		"MONGODB_AUTH_SOURCE",
-	})
-	host := os.Getenv("MONGODB_HOST")
-	port := os.Getenv("MONGODB_PORT")
-	database := os.Getenv("MONGODB_DB")
-	user := os.Getenv("MONGODB_USER")
-	password := os.Getenv("MONGODB_PASSWORD")
-	authSource := os.Getenv("MONGODB_AUTH_SOURCE")
+	envManager := EnvManager{}
+	mongoConfig, err := envManager.GetMongoConfig()
+	if err != nil {
+		panic(err)
+	}
 
-	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=%s", user, password, host, port, database, authSource)
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=%s", mongoConfig.Username, mongoConfig.Password, mongoConfig.Host, mongoConfig.Port, mongoConfig.DatabaseName, mongoConfig.AuthSource)
 	return uri
 }
 
