@@ -16,10 +16,7 @@ type MongoClient struct {
 }
 
 func NewMongoClient() *MongoClient {
-	var uri string
-	if uri = os.Getenv("MONGODB_URI"); uri == "" {
-		log.Fatal("You must set your 'MONGODB_URI' environment variable. See\n\t https://docs.mongodb.com/drivers/go/current/usage-examples/")
-	}
+	uri := buildMongoURI()
 	// Uses the SetServerAPIOptions() method to set the Stable API version to 1
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	// Defines the options for the MongoDB client
@@ -29,11 +26,6 @@ func NewMongoClient() *MongoClient {
 	if err != nil {
 		panic(err)
 	}
-	defer func() {
-		if err = client.Disconnect(context.TODO()); err != nil {
-			panic(err)
-		}
-	}()
 	// Sends a ping to confirm a successful connection
 	var result bson.M
 	if err := client.Database("admin").RunCommand(context.TODO(), bson.M{"ping": 1}).Decode(&result); err != nil {
@@ -44,12 +36,37 @@ func NewMongoClient() *MongoClient {
 	}
 }
 
+func validateEnvVariables(vars []string) {
+	for _, v := range vars {
+		if os.Getenv(v) == "" {
+			log.Fatalf("You must set your '%s' environment variable.", v)
+		}
+	}
+}
+
+func buildMongoURI() string {
+	validateEnvVariables([]string{
+		"MONGODB_HOST",
+		"MONGODB_PORT",
+		"MONGODB_DB",
+		"MONGODB_USER",
+		"MONGODB_PASSWORD",
+		"MONGODB_AUTH_SOURCE",
+	})
+	host := os.Getenv("MONGODB_HOST")
+	port := os.Getenv("MONGODB_PORT")
+	database := os.Getenv("MONGODB_DB")
+	user := os.Getenv("MONGODB_USER")
+	password := os.Getenv("MONGODB_PASSWORD")
+	authSource := os.Getenv("MONGODB_AUTH_SOURCE")
+
+	uri := fmt.Sprintf("mongodb://%s:%s@%s:%s/%s?authSource=%s", user, password, host, port, database, authSource)
+	return uri
+}
+
 // Helper method to get a collection by name
 func (mc *MongoClient) getCollection(collectionName string) *mongo.Collection {
-	databaseName := os.Getenv("MONGODB_DATABASE")
-	if databaseName == "" {
-		log.Fatal("You must set your 'MONGODB_DATABASE' environment variable.")
-	}
+	databaseName := os.Getenv("MONGODB_DB")
 	return mc.client.Database(databaseName).Collection(collectionName)
 }
 

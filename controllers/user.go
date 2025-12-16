@@ -36,15 +36,19 @@ func (uc *UserController) CreateHandler(c *gin.Context) {
 		return
 	}
 	entity := (&entities.User{}).CreateNew()
-	entity.SetEmail(dto.Email)
-	err := entity.SetPassword(dto.Password)
+	err := entity.SetEmail(dto.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err = entity.SetPassword(dto.Password)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	err = entity.Save()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user", "details": err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, entity)

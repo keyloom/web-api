@@ -2,6 +2,7 @@ package entities
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/keyloom/web-api/core"
@@ -108,6 +109,17 @@ func (u *User) CheckPassword(password string) bool {
 }
 
 // Sets the user's email
-func (u *User) SetEmail(email string) {
+func (u *User) SetEmail(email string) error {
+	exists := u.EmailExists(email)
+	if exists {
+		return errors.New("email already in use")
+	}
 	u.Email = email
+	return nil
+}
+
+func (u *User) EmailExists(email string) bool {
+	client := core.NewMongoClient()
+	result := client.FindOne(u.CollectionName(), bson.M{"email": email})
+	return result.Err() == nil
 }
