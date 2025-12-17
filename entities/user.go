@@ -68,6 +68,21 @@ func (u *User) LoadByIDs(ids []string) []*User {
 	return users
 }
 
+// Loads a user by their email
+func (u *User) LoadByEmail(email string) *User {
+	client := core.NewMongoClient()
+	result := client.FindOne(u.CollectionName(), bson.M{"email": email})
+	if result.Err() != nil {
+		return nil
+	}
+	var user User
+	err := result.Decode(&user)
+	if err != nil {
+		return nil
+	}
+	return &user
+}
+
 // Saves the user to the database
 func (u *User) Save() error {
 	client := core.NewMongoClient()
