@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/keyloom/web-api/core"
 	token_dtos "github.com/keyloom/web-api/dtos/token"
+	"github.com/keyloom/web-api/entities"
 )
 
 type TokenController struct{}
@@ -49,5 +50,28 @@ func (tc *TokenController) PasswordGrantHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	// TODO: Validate user credentials here
+
+	// load user by email
+	user := (&entities.User{}).LoadByEmail(req.Username)
+	if user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	// verify password
+	passMatch := user.CheckPassword(req.Password)
+	if !passMatch {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid credentials"})
+		return
+	}
+
+	// generate token
+	token, err := (&core.TokenService{}).GenerateToken(user.ID.String())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
+		return
+	}
+
+	// respond with token
+	c.JSON(http.StatusOK, token)
 }

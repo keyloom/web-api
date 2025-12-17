@@ -4,16 +4,17 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
+	token_dtos "github.com/keyloom/web-api/dtos/token"
 )
 
 type TokenService struct{}
 
 func (s *TokenService) GenerateToken(
 	sub string,
-) (string, error) {
+) (token_dtos.AccessTokenResponse, error) {
 	config, err := (&EnvManager{}).GetTokenConfig()
 	if err != nil {
-		return "", err
+		return token_dtos.AccessTokenResponse{}, err
 	}
 
 	expirationTime := time.Now().Add(time.Duration(config.TokenDuration) * time.Minute)
@@ -27,8 +28,12 @@ func (s *TokenService) GenerateToken(
 
 	signedToken, err := token.SignedString([]byte(config.SecretKey))
 	if err != nil {
-		return "", err
+		return token_dtos.AccessTokenResponse{}, err
 	}
 
-	return signedToken, nil
+	return token_dtos.AccessTokenResponse{
+		AccessToken: signedToken,
+		TokenType:   "Bearer",
+		ExpiresIn:   int64(time.Until(expirationTime).Seconds()),
+	}, nil
 }
