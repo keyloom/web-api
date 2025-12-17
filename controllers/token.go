@@ -14,12 +14,24 @@ type TokenController struct{}
 var _ core.Controller = (*TokenController)(nil)
 
 func (tc *TokenController) RegisterRoutes(engine *gin.Engine) {
-	tokenGroup := engine.Group("/tokens")
+	tokenGroup := engine.Group("/token")
 	{
 		tokenGroup.POST("/", tc.TokenDispatchHandler)
 	}
 }
 
+// @Summary Token dispatch endpoint
+// @Param grant_type formData string true "Grant type"
+// @Param username formData string false "Username for password grant"
+// @Param password formData string false "Password for password grant"
+// @Param client_id formData string false "Client ID for client credentials grant"
+// @Description Dispatch tokens based on the provided grant type
+// @Accept application/x-www-form-urlencoded
+// @Produce json
+// @Success 200 {object} token_dtos.AccessTokenResponse
+// @Failure 400 {object} interface{}
+// @Failure 500 {object} interface{}
+// @Router /token/ [post]
 func (tc *TokenController) TokenDispatchHandler(c *gin.Context) {
 	grantType := c.PostForm("grant_type")
 	if grantType == "" {
@@ -66,7 +78,7 @@ func (tc *TokenController) PasswordGrantHandler(c *gin.Context) {
 	}
 
 	// generate token
-	token, err := (&core.TokenService{}).GenerateToken(user.ID.String())
+	token, err := (&core.TokenService{}).GenerateToken(user.ID.Hex())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate token"})
 		return

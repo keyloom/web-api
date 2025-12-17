@@ -34,6 +34,6 @@ func (s *TokenService) GenerateToken(
 	return token_dtos.AccessTokenResponse{
 		AccessToken: signedToken,
 		TokenType:   "Bearer",
-		ExpiresIn:   int64(time.Until(expirationTime).Seconds()),
+		ExpiresAt:   expirationTime.Unix(),
 	}, nil
 }

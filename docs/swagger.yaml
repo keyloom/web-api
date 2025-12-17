@@ -12,6 +12,15 @@ definitions:
       updated_at:
         type: integer
     type: object
+  token_dtos.AccessTokenResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      token_type:
+        type: string
+    type: object
   user_dtos.CreateUserDTO:
     properties:
       confirm_password:
@@ -29,6 +38,43 @@ definitions:
 info:
   contact: {}
 paths:
+  /token/:
+    post:
+      consumes:
+      - application/x-www-form-urlencoded
+      description: Dispatch tokens based on the provided grant type
+      parameters:
+      - description: Grant type
+        in: formData
+        name: grant_type
+        required: true
+        type: string
+      - description: Username for password grant
+        in: formData
+        name: username
+        type: string
+      - description: Password for password grant
+        in: formData
+        name: password
+        type: string
+      - description: Client ID for client credentials grant
+        in: formData
+        name: client_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/token_dtos.AccessTokenResponse'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Token dispatch endpoint
   /users/:
     post:
       consumes:
