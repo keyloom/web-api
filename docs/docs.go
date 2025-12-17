@@ -59,7 +59,7 @@ const docTemplate = `{
         "entities.User": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "integer"
                 },
                 "email": {
@@ -71,7 +71,7 @@ const docTemplate = `{
                 "password": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "integer"
                 }
             }

@@ -48,7 +48,7 @@
         "entities.User": {
             "type": "object",
             "properties": {
-                "createdAt": {
+                "created_at": {
                     "type": "integer"
                 },
                 "email": {
@@ -60,7 +60,7 @@
                 "password": {
                     "type": "string"
                 },
-                "updatedAt": {
+                "updated_at": {
                     "type": "integer"
                 }
             }
