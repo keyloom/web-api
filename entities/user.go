@@ -87,10 +87,13 @@ func (u *User) LoadByEmail(email string) *User {
 func (u *User) Save() error {
 	client := core.NewMongoClient()
 	if u.ID != primitive.NilObjectID {
+		u.UpdatedAt = time.Now().Unix()
 		_, err := client.UpdateOne(u.CollectionName(), bson.M{"_id": u.ID}, bson.M{"$set": u})
 		return err
 	} else {
 		u.ID = primitive.NewObjectID()
+		u.CreatedAt = time.Now().Unix()
+		u.UpdatedAt = time.Now().Unix()
 		_, err := client.InsertOne(u.CollectionName(), u)
 		return err
 	}
