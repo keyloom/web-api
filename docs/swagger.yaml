@@ -1,4 +1,26 @@
 definitions:
+  audience_dtos.CreateAudienceDTO:
+    properties:
+      description:
+        type: string
+      display_name:
+        type: string
+    type: object
+  entities.Audience:
+    properties:
+      created_at:
+        type: integer
+      description:
+        type: string
+      display_name:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: integer
+    type: object
   entities.User:
     properties:
       created_at:
@@ -16,7 +38,7 @@ definitions:
     properties:
       access_token:
         type: string
-      expires_in:
+      expires_at:
         type: integer
       token_type:
         type: string
@@ -38,6 +60,32 @@ definitions:
 info:
   contact: {}
 paths:
+  /audiences/:
+    post:
+      consumes:
+      - application/json
+      description: Create a new audience with the provided display name and description
+      parameters:
+      - description: Audience creation data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/audience_dtos.CreateAudienceDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Audience'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a new audience
   /token/:
     post:
       consumes:

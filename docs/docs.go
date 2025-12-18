@@ -15,6 +15,45 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/audiences/": {
+            "post": {
+                "description": "Create a new audience with the provided display name and description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Create a new audience",
+                "parameters": [
+                    {
+                        "description": "Audience creation data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/audience_dtos.CreateAudienceDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Audience"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/token/": {
             "post": {
                 "description": "Dispatch tokens based on the provided grant type",
@@ -111,6 +150,40 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "audience_dtos.CreateAudienceDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "entities.Audience": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                }
+            }
+        },
         "entities.User": {
             "type": "object",
             "properties": {
@@ -137,7 +210,7 @@ const docTemplate = `{
                 "access_token": {
                     "type": "string"
                 },
-                "expires_in": {
+                "expires_at": {
                     "type": "integer"
                 },
                 "token_type": {
