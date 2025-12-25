@@ -1,4 +1,16 @@
 definitions:
+  application_dtos.CreateApplicationDTO:
+    properties:
+      audience_id:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - audience_id
+    - name
+    type: object
   audience_dtos.CreateAudienceDTO:
     properties:
       description:
@@ -12,6 +24,27 @@ definitions:
         type: string
       display_name:
         type: string
+    type: object
+  entities.Application:
+    properties:
+      audience:
+        $ref: '#/definitions/entities.Audience'
+      client_id:
+        type: string
+      client_secret:
+        items:
+          $ref: '#/definitions/entities.ClientSecret'
+        type: array
+      created_at:
+        type: integer
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: integer
     type: object
   entities.Audience:
     properties:
@@ -27,6 +60,17 @@ definitions:
         type: string
       updated_at:
         type: integer
+    type: object
+  entities.ClientSecret:
+    properties:
+      created_at:
+        type: integer
+      expire_at:
+        type: integer
+      name:
+        type: string
+      value:
+        type: string
     type: object
   entities.User:
     properties:
@@ -67,6 +111,124 @@ definitions:
 info:
   contact: {}
 paths:
+  /applications/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of all applications
+      parameters:
+      - default: 10
+        description: Number of applications to return
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Application'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all applications with pagination
+      tags:
+      - Applications
+    post:
+      consumes:
+      - application/json
+      description: Create a new application with the provided name, description, and
+        audience ID
+      parameters:
+      - description: Application creation data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/application_dtos.CreateApplicationDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.Application'
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Create a new application
+      tags:
+      - Applications
+  /applications/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an application by its ID
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Application'
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get application by ID
+      tags:
+      - Applications
+    put:
+      consumes:
+      - application/json
+      description: Update an existing application's name and description
+      parameters:
+      - description: Application ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Application update data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/application_dtos.CreateApplicationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Application'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an existing application
+      tags:
+      - Applications
   /audiences/:
     get:
       consumes:

@@ -10,14 +10,21 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+type ClientSecret struct {
+	Name      string `bson:"name" json:"name"`
+	Value     string `bson:"value" json:"value"`
+	ExpireAt  int64  `bson:"expire_at" json:"expire_at"`
+	CreatedAt int64  `bson:"created_at" json:"created_at"`
+}
+
 type Application struct {
-	core.Entity  `bson:",inline" json:",inline"`
-	Audience     `bson:"-" json:"audience"`
-	AudienceID   primitive.ObjectID `bson:"audience_id" json:"-"`
-	Name         string             `bson:"name" json:"name"`
-	Description  string             `bson:"description" json:"description"`
-	ClientID     string             `bson:"client_id" json:"client_id"`
-	ClientSecret string             `bson:"client_secret" json:"client_secret"`
+	core.Entity   `bson:",inline" json:",inline"`
+	Audience      `bson:"-" json:"audience"`
+	AudienceID    primitive.ObjectID `bson:"audience_id" json:"-"`
+	Name          string             `bson:"name" json:"name"`
+	Description   string             `bson:"description" json:"description"`
+	ClientID      string             `bson:"client_id" json:"client_id"`
+	ClientSecrets []ClientSecret     `bson:"client_secret" json:"client_secret"`
 }
 
 var _ core.IEntity[Application] = (*Application)(nil)
@@ -33,6 +40,7 @@ func (a *Application) CreateNew() *Application {
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
 		},
+		ClientSecrets: []ClientSecret{},
 	}
 }
 
