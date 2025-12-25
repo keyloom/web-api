@@ -7,6 +7,7 @@ import (
 	"github.com/keyloom/web-api/core"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Audience struct {
@@ -30,6 +31,31 @@ func (a *Audience) CreateNew() *Audience {
 			UpdatedAt: time.Now().Unix(),
 		},
 	}
+}
+
+func (a *Audience) LoadAll(top, page int) []*Audience {
+	client := core.NewMongoClient()
+	skip := (page - 1) * top
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(top))
+	findOptions.SetSkip(int64(skip))
+
+	cursor, err := client.FindMany(a.CollectionName(), bson.D{}, findOptions)
+	if err != nil {
+		return nil
+	}
+	defer cursor.Close(context.TODO())
+
+	var audiences []*Audience
+	for cursor.Next(context.TODO()) {
+		var audience Audience
+		err := cursor.Decode(&audience)
+		if err != nil {
+			continue
+		}
+		audiences = append(audiences, &audience)
+	}
+	return audiences
 }
 
 func (a *Audience) LoadByID(id string) *Audience {

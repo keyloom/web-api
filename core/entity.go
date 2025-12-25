@@ -13,6 +13,7 @@ type IEntity[T any] interface {
 	CreateNew() *T
 	LoadByID(id string) *T
 	LoadByIDs(ids []string) []*T
+	LoadAll(top, page int) []*T
 	Save() error
 	Delete() error
 }

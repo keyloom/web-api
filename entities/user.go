@@ -8,6 +8,7 @@ import (
 	"github.com/keyloom/web-api/core"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type User struct {
@@ -30,6 +31,32 @@ func (u *User) CreateNew() *User {
 			UpdatedAt: time.Now().Unix(),
 		},
 	}
+}
+
+// Loads all users with pagination
+func (u *User) LoadAll(top, page int) []*User {
+	client := core.NewMongoClient()
+	skip := (page - 1) * top
+	findOptions := options.Find()
+	findOptions.SetLimit(int64(top))
+	findOptions.SetSkip(int64(skip))
+
+	cursor, err := client.FindMany(u.CollectionName(), bson.D{}, findOptions)
+	if err != nil {
+		return nil
+	}
+	defer cursor.Close(context.TODO())
+
+	var users []*User
+	for cursor.Next(context.TODO()) {
+		var user User
+		err := cursor.Decode(&user)
+		if err != nil {
+			continue
+		}
+		users = append(users, &user)
+	}
+	return users
 }
 
 func (u *User) LoadByID(id string) *User {

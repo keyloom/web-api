@@ -70,9 +70,9 @@ func (mc *MongoClient) FindOne(collectionName string, filter interface{}) *mongo
 }
 
 // FindMany finds multiple documents in the specified collection
-func (mc *MongoClient) FindMany(collectionName string, filter interface{}) (*mongo.Cursor, error) {
+func (mc *MongoClient) FindMany(collectionName string, filter interface{}, opts ...options.Lister[options.FindOptions]) (*mongo.Cursor, error) {
 	collection := mc.getCollection(collectionName)
-	cursor, err := collection.Find(context.TODO(), filter)
+	cursor, err := collection.Find(context.TODO(), filter, opts...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to find documents: %v", err)
 	}
