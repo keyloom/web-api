@@ -6,6 +6,13 @@ definitions:
       display_name:
         type: string
     type: object
+  audience_dtos.UpdateAudienceDTO:
+    properties:
+      description:
+        type: string
+      display_name:
+        type: string
+    type: object
   entities.Audience:
     properties:
       created_at:
@@ -61,6 +68,36 @@ info:
   contact: {}
 paths:
   /audiences/:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a paginated list of audiences
+      parameters:
+      - default: 10
+        description: Number of audiences to return
+        in: query
+        name: limit
+        type: integer
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.Audience'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Get all audiences with pagination
+      tags:
+      - Audiences
     post:
       consumes:
       - application/json
@@ -86,6 +123,65 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Create a new audience
+      tags:
+      - Audiences
+  /audiences/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve an audience by its ID
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Audience'
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get audience by ID
+      tags:
+      - Audiences
+    put:
+      consumes:
+      - application/json
+      description: Update an existing audience's display name and description
+      parameters:
+      - description: Audience ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Audience update data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/audience_dtos.UpdateAudienceDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Audience'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: Update an existing audience
       tags:
       - Audiences
   /token/:

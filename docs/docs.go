@@ -16,6 +16,50 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/audiences/": {
+            "get": {
+                "description": "Retrieve a paginated list of audiences",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audiences"
+                ],
+                "summary": "Get all audiences with pagination",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "default": 10,
+                        "description": "Number of audiences to return",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Page number",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/entities.Audience"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            },
             "post": {
                 "description": "Create a new audience with the provided display name and description",
                 "consumes": [
@@ -48,6 +92,93 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
+        "/audiences/{id}": {
+            "get": {
+                "description": "Retrieve an audience by its ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audiences"
+                ],
+                "summary": "Get audience by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Audience ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Audience"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
+                    }
+                }
+            },
+            "put": {
+                "description": "Update an existing audience's display name and description",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Audiences"
+                ],
+                "summary": "Update an existing audience",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Audience ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Audience update data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/audience_dtos.UpdateAudienceDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.Audience"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {}
                     },
                     "500": {
@@ -160,6 +291,17 @@ const docTemplate = `{
     },
     "definitions": {
         "audience_dtos.CreateAudienceDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "audience_dtos.UpdateAudienceDTO": {
             "type": "object",
             "properties": {
                 "description": {
