@@ -32,6 +32,7 @@ func (tc *TokenController) RegisterRoutes(engine *gin.Engine) {
 // @Failure 400 {object} interface{}
 // @Failure 500 {object} interface{}
 // @Router /token/ [post]
+// @Tags Tokens
 func (tc *TokenController) TokenDispatchHandler(c *gin.Context) {
 	grantType := c.PostForm("grant_type")
 	if grantType == "" {

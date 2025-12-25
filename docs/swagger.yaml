@@ -86,6 +86,8 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Create a new audience
+      tags:
+      - Audiences
   /token/:
     post:
       consumes:
@@ -123,6 +125,8 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Token dispatch endpoint
+      tags:
+      - Tokens
   /users/:
     post:
       consumes:
@@ -149,4 +153,6 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Create a new user
+      tags:
+      - Users
 swagger: "2.0"

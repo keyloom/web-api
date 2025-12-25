@@ -29,6 +29,7 @@ func (uc *UserController) RegisterRoutes(engine *gin.Engine) {
 // @Failure 400 {object} interface{}
 // @Failure 500 {object} interface{}
 // @Router /users/ [post]
+// @Tags Users
 func (uc *UserController) CreateHandler(c *gin.Context) {
 	var dto user_dtos.CreateUserDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {

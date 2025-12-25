@@ -24,6 +24,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
+                "tags": [
+                    "Audiences"
+                ],
                 "summary": "Create a new audience",
                 "parameters": [
                     {
@@ -62,6 +65,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Tokens"
                 ],
                 "summary": "Token dispatch endpoint",
                 "parameters": [
@@ -117,6 +123,9 @@ const docTemplate = `{
                 ],
                 "produces": [
                     "application/json"
+                ],
+                "tags": [
+                    "Users"
                 ],
                 "summary": "Create a new user",
                 "parameters": [

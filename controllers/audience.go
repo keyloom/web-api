@@ -29,6 +29,7 @@ func (ac *AudienceController) RegisterRoutes(engine *gin.Engine) {
 // @Failure 400 {object} interface{}
 // @Failure 500 {object} interface{}
 // @Router /audiences/ [post]
+// @Tags Audiences
 func (ac *AudienceController) CreateHandler(c *gin.Context) {
 	var dto audience_dtos.CreateAudienceDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
