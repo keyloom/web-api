@@ -60,7 +60,8 @@ func (a *Audience) LoadAll(top, page int) []*Audience {
 
 func (a *Audience) LoadByID(id string) *Audience {
 	client := core.NewMongoClient()
-	result := client.FindOne(a.CollectionName(), map[string]interface{}{"_id": id})
+	oid, _ := primitive.ObjectIDFromHex(id)
+	result := client.FindOne(a.CollectionName(), bson.M{"_id": oid})
 	if result.Err() != nil {
 		return nil
 	}

@@ -54,6 +54,7 @@ func (ac *ApplicationController) CreateHandler(c *gin.Context) {
 		return
 	}
 	entity.AudienceID = audienceID
+	entity.Audience = *audienceEntity
 	entity.ClientID = primitive.NewObjectID().Hex()
 
 	entity.Save()
