@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/keyloom/web-api/core"
-	audience_dtos "github.com/keyloom/web-api/dtos/resource_server_dtos"
+	"github.com/keyloom/web-api/dtos/resource_server_dtos"
 	"github.com/keyloom/web-api/entities"
 )
 
@@ -35,7 +35,7 @@ func (ac *ResourceServerController) RegisterRoutes(engine *gin.Engine) {
 // @Router /resource-servers/ [post]
 // @Tags ResourceServers
 func (ac *ResourceServerController) CreateHandler(c *gin.Context) {
-	var dto audience_dtos.CreateResourceServerDTO
+	var dto resource_server_dtos.CreateResourceServerDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request payload"})
 		return
@@ -49,7 +49,7 @@ func (ac *ResourceServerController) CreateHandler(c *gin.Context) {
 	entity.Name = strings.ToLower(strings.ReplaceAll(dto.DisplayName, " ", "-"))
 	err := entity.Save()
 	if err != nil {
-		c.JSON(500, gin.H{"error": "Failed to create audience"})
+		c.JSON(500, gin.H{"error": "Failed to create resource server"})
 		return
 	}
 	c.JSON(201, entity)
@@ -79,8 +79,8 @@ func (ac *ResourceServerController) GetAllHandler(c *gin.Context) {
 		pg = 1
 	}
 	resourceServer := &entities.ResourceServer{}
-	audiences := resourceServer.LoadAll(top, pg)
-	c.JSON(200, audiences)
+	resourceServers := resourceServer.LoadAll(top, pg)
+	c.JSON(200, resourceServers)
 }
 
 // @Summary Get resource server by ID
@@ -104,7 +104,7 @@ func (ac *ResourceServerController) GetByIDHandler(c *gin.Context) {
 
 // @Summary Update an existing resource server
 // @Param id path string true "Resource Server ID"
-// @Param body body audience_dtos.UpdateResourceServerDTO true "Resource Server update data"
+// @Param body body resource_server_dtos.UpdateResourceServerDTO true "Resource Server update data"
 // @Description Update an existing resource server's display name and description
 // @Accept json
 // @Produce json
@@ -115,7 +115,7 @@ func (ac *ResourceServerController) GetByIDHandler(c *gin.Context) {
 // @Router /resource-servers/{id} [put]
 // @Tags ResourceServers
 func (ac *ResourceServerController) UpdateHandler(c *gin.Context) {
-	dto := audience_dtos.UpdateResourceServerDTO{}
+	dto := resource_server_dtos.UpdateResourceServerDTO{}
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(400, gin.H{"error": "Invalid request payload"})
 		return
