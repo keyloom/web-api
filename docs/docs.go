@@ -50,9 +50,16 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entities.Application"
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/entities.Application"
+                                }
                             }
                         }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
                     },
                     "500": {
                         "description": "Internal Server Error",

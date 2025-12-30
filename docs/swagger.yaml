@@ -134,8 +134,13 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entities.Application'
+              items:
+                $ref: '#/definitions/entities.Application'
+              type: array
             type: array
+        "404":
+          description: Not Found
+          schema: {}
         "500":
           description: Internal Server Error
           schema: {}
