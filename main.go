@@ -26,7 +26,7 @@ func main() {
 	// Controller registration
 	(&controllers.UserController{}).RegisterRoutes(e)
 	(&controllers.TokenController{}).RegisterRoutes(e)
-	(&controllers.AudienceController{}).RegisterRoutes(e)
+	(&controllers.ResourceServerController{}).RegisterRoutes(e)
 	(&controllers.ApplicationController{}).RegisterRoutes(e)
 
 	e.Run(":8080")

@@ -10,21 +10,21 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-type Audience struct {
+type ResourceServer struct {
 	core.Entity `bson:",inline" json:",inline"`
 	DisplayName string `bson:"display_name" json:"display_name"`
 	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description" json:"description"`
 }
 
-var _ core.IEntity[Audience] = (*Audience)(nil)
+var _ core.IEntity[ResourceServer] = (*ResourceServer)(nil)
 
-func (a *Audience) CollectionName() string {
+func (a *ResourceServer) CollectionName() string {
 	return "audiences"
 }
 
-func (a *Audience) CreateNew() *Audience {
-	return &Audience{
+func (a *ResourceServer) CreateNew() *ResourceServer {
+	return &ResourceServer{
 		Entity: core.Entity{
 			ID:        primitive.NilObjectID,
 			CreatedAt: time.Now().Unix(),
@@ -33,7 +33,7 @@ func (a *Audience) CreateNew() *Audience {
 	}
 }
 
-func (a *Audience) LoadAll(top, page int) []*Audience {
+func (a *ResourceServer) LoadAll(top, page int) []*ResourceServer {
 	client := core.NewMongoClient()
 	skip := (page - 1) * top
 	findOptions := options.Find()
@@ -46,9 +46,9 @@ func (a *Audience) LoadAll(top, page int) []*Audience {
 	}
 	defer cursor.Close(context.TODO())
 
-	var audiences []*Audience
+	var audiences []*ResourceServer
 	for cursor.Next(context.TODO()) {
-		var audience Audience
+		var audience ResourceServer
 		err := cursor.Decode(&audience)
 		if err != nil {
 			continue
@@ -58,14 +58,14 @@ func (a *Audience) LoadAll(top, page int) []*Audience {
 	return audiences
 }
 
-func (a *Audience) LoadByID(id string) *Audience {
+func (a *ResourceServer) LoadByID(id string) *ResourceServer {
 	client := core.NewMongoClient()
 	oid, _ := primitive.ObjectIDFromHex(id)
 	result := client.FindOne(a.CollectionName(), bson.M{"_id": oid})
 	if result.Err() != nil {
 		return nil
 	}
-	var audience Audience
+	var audience ResourceServer
 	err := result.Decode(&audience)
 	if err != nil {
 		return nil
@@ -74,7 +74,7 @@ func (a *Audience) LoadByID(id string) *Audience {
 }
 
 // Loads multiple audiences by their IDs
-func (a *Audience) LoadByIDs(ids []string) []*Audience {
+func (a *ResourceServer) LoadByIDs(ids []string) []*ResourceServer {
 	client := core.NewMongoClient()
 	cursor, err := client.FindMany(a.CollectionName(), map[string]interface{}{
 		"_id": map[string]interface{}{"$in": ids},
@@ -84,9 +84,9 @@ func (a *Audience) LoadByIDs(ids []string) []*Audience {
 	}
 	defer cursor.Close(context.TODO())
 
-	var audiences []*Audience
+	var audiences []*ResourceServer
 	for cursor.Next(context.TODO()) {
-		var audience Audience
+		var audience ResourceServer
 		err := cursor.Decode(&audience)
 		if err != nil {
 			continue
@@ -96,7 +96,7 @@ func (a *Audience) LoadByIDs(ids []string) []*Audience {
 	return audiences
 }
 
-func (a *Audience) Save() error {
+func (a *ResourceServer) Save() error {
 	client := core.NewMongoClient()
 	if a.ID != primitive.NilObjectID {
 		a.UpdatedAt = time.Now().Unix()
@@ -111,7 +111,7 @@ func (a *Audience) Save() error {
 	}
 }
 
-func (a *Audience) Delete() error {
+func (a *ResourceServer) Delete() error {
 	client := core.NewMongoClient()
 	_, err := client.DeleteOne(a.CollectionName(), bson.M{"_id": a.ID})
 	return err

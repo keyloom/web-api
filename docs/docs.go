@@ -195,9 +195,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/audiences/": {
+        "/resource-servers/": {
             "get": {
-                "description": "Retrieve a paginated list of audiences",
+                "description": "Retrieve a paginated list of resource servers",
                 "consumes": [
                     "application/json"
                 ],
@@ -205,14 +205,14 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Audiences"
+                    "ResourceServers"
                 ],
-                "summary": "Get all audiences with pagination",
+                "summary": "Get all resource servers with pagination",
                 "parameters": [
                     {
                         "type": "integer",
                         "default": 10,
-                        "description": "Number of audiences to return",
+                        "description": "Number of resource servers to return",
                         "name": "limit",
                         "in": "query"
                     },
@@ -230,7 +230,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/entities.Audience"
+                                "$ref": "#/definitions/entities.ResourceServer"
                             }
                         }
                     },
@@ -241,7 +241,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Create a new audience with the provided display name and description",
+                "description": "Create a new resource server with the provided display name and description",
                 "consumes": [
                     "application/json"
                 ],
@@ -249,17 +249,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Audiences"
+                    "ResourceServers"
                 ],
-                "summary": "Create a new audience",
+                "summary": "Create a new resource server",
                 "parameters": [
                     {
-                        "description": "Audience creation data",
+                        "description": "Resource server creation data",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/audience_dtos.CreateAudienceDTO"
+                            "$ref": "#/definitions/resource_server_dtos.CreateResourceServerDTO"
                         }
                     }
                 ],
@@ -267,7 +267,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/entities.Audience"
+                            "$ref": "#/definitions/entities.ResourceServer"
                         }
                     },
                     "400": {
@@ -281,9 +281,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/audiences/{id}": {
+        "/resource-servers/{id}": {
             "get": {
-                "description": "Retrieve an audience by its ID",
+                "description": "Retrieve a resource server by its ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -291,13 +291,13 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Audiences"
+                    "ResourceServers"
                 ],
-                "summary": "Get audience by ID",
+                "summary": "Get resource server by ID",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Audience ID",
+                        "description": "Resource Server ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -307,7 +307,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.Audience"
+                            "$ref": "#/definitions/entities.ResourceServer"
                         }
                     },
                     "404": {
@@ -317,7 +317,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Update an existing audience's display name and description",
+                "description": "Update an existing resource server's display name and description",
                 "consumes": [
                     "application/json"
                 ],
@@ -325,24 +325,24 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Audiences"
+                    "ResourceServers"
                 ],
-                "summary": "Update an existing audience",
+                "summary": "Update an existing resource server",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Audience ID",
+                        "description": "Resource Server ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Audience update data",
+                        "description": "Resource Server update data",
                         "name": "body",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/audience_dtos.UpdateAudienceDTO"
+                            "$ref": "#/definitions/resource_server_dtos.UpdateResourceServerDTO"
                         }
                     }
                 ],
@@ -350,7 +350,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entities.Audience"
+                            "$ref": "#/definitions/entities.ResourceServer"
                         }
                     },
                     "400": {
@@ -488,33 +488,11 @@ const docTemplate = `{
                 }
             }
         },
-        "audience_dtos.CreateAudienceDTO": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "display_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "audience_dtos.UpdateAudienceDTO": {
-            "type": "object",
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "display_name": {
-                    "type": "string"
-                }
-            }
-        },
         "entities.Application": {
             "type": "object",
             "properties": {
                 "audience": {
-                    "$ref": "#/definitions/entities.Audience"
+                    "$ref": "#/definitions/entities.ResourceServer"
                 },
                 "client_id": {
                     "type": "string"
@@ -529,29 +507,6 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "integer"
-                }
-            }
-        },
-        "entities.Audience": {
-            "type": "object",
-            "properties": {
-                "created_at": {
-                    "type": "integer"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "display_name": {
                     "type": "string"
                 },
                 "id": {
@@ -582,6 +537,29 @@ const docTemplate = `{
                 }
             }
         },
+        "entities.ResourceServer": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "integer"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "integer"
+                }
+            }
+        },
         "entities.User": {
             "type": "object",
             "properties": {
@@ -599,6 +577,28 @@ const docTemplate = `{
                 },
                 "updated_at": {
                     "type": "integer"
+                }
+            }
+        },
+        "resource_server_dtos.CreateResourceServerDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "resource_server_dtos.UpdateResourceServerDTO": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "display_name": {
+                    "type": "string"
                 }
             }
         },

@@ -18,13 +18,13 @@ type ClientSecret struct {
 }
 
 type Application struct {
-	core.Entity   `bson:",inline" json:",inline"`
-	Audience      `bson:"-" json:"audience"`
-	AudienceID    primitive.ObjectID `bson:"audience_id" json:"-"`
-	Name          string             `bson:"name" json:"name"`
-	Description   string             `bson:"description" json:"description"`
-	ClientID      string             `bson:"client_id" json:"client_id"`
-	ClientSecrets []ClientSecret     `bson:"client_secret" json:"client_secret"`
+	core.Entity    `bson:",inline" json:",inline"`
+	ResourceServer `bson:"-" json:"audience"`
+	AudienceID     primitive.ObjectID `bson:"audience_id" json:"-"`
+	Name           string             `bson:"name" json:"name"`
+	Description    string             `bson:"description" json:"description"`
+	ClientID       string             `bson:"client_id" json:"client_id"`
+	ClientSecrets  []ClientSecret     `bson:"client_secret" json:"client_secret"`
 }
 
 var _ core.IEntity[Application] = (*Application)(nil)
@@ -64,11 +64,11 @@ func (a *Application) LoadAll(top, page int) []*Application {
 		if err != nil {
 			continue
 		}
-		audience := (&Audience{}).LoadByID(app.AudienceID.Hex())
+		audience := (&ResourceServer{}).LoadByID(app.AudienceID.Hex())
 		if audience == nil {
 			continue
 		}
-		app.Audience = *audience
+		app.ResourceServer = *audience
 		applications = append(applications, &app)
 	}
 	return applications
@@ -85,11 +85,11 @@ func (a *Application) LoadByID(id string) *Application {
 	if err != nil {
 		return nil
 	}
-	audience := (&Audience{}).LoadByID(application.AudienceID.Hex())
+	audience := (&ResourceServer{}).LoadByID(application.AudienceID.Hex())
 	if audience == nil {
 		return nil
 	}
-	application.Audience = *audience
+	application.ResourceServer = *audience
 	return &application
 }
 
@@ -111,11 +111,11 @@ func (a *Application) LoadByIDs(ids []string) []*Application {
 		if err != nil {
 			continue
 		}
-		audience := (&Audience{}).LoadByID(app.AudienceID.Hex())
+		audience := (&ResourceServer{}).LoadByID(app.AudienceID.Hex())
 		if audience == nil {
 			continue
 		}
-		app.Audience = *audience
+		app.ResourceServer = *audience
 		applications = append(applications, &app)
 	}
 	return applications

@@ -11,24 +11,10 @@ definitions:
     - audience_id
     - name
     type: object
-  audience_dtos.CreateAudienceDTO:
-    properties:
-      description:
-        type: string
-      display_name:
-        type: string
-    type: object
-  audience_dtos.UpdateAudienceDTO:
-    properties:
-      description:
-        type: string
-      display_name:
-        type: string
-    type: object
   entities.Application:
     properties:
       audience:
-        $ref: '#/definitions/entities.Audience'
+        $ref: '#/definitions/entities.ResourceServer'
       client_id:
         type: string
       client_secret:
@@ -38,21 +24,6 @@ definitions:
       created_at:
         type: integer
       description:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      updated_at:
-        type: integer
-    type: object
-  entities.Audience:
-    properties:
-      created_at:
-        type: integer
-      description:
-        type: string
-      display_name:
         type: string
       id:
         type: string
@@ -72,6 +43,21 @@ definitions:
       value:
         type: string
     type: object
+  entities.ResourceServer:
+    properties:
+      created_at:
+        type: integer
+      description:
+        type: string
+      display_name:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: integer
+    type: object
   entities.User:
     properties:
       created_at:
@@ -84,6 +70,20 @@ definitions:
         type: string
       updated_at:
         type: integer
+    type: object
+  resource_server_dtos.CreateResourceServerDTO:
+    properties:
+      description:
+        type: string
+      display_name:
+        type: string
+    type: object
+  resource_server_dtos.UpdateResourceServerDTO:
+    properties:
+      description:
+        type: string
+      display_name:
+        type: string
     type: object
   token_dtos.AccessTokenResponse:
     properties:
@@ -234,14 +234,14 @@ paths:
       summary: Update an existing application
       tags:
       - Applications
-  /audiences/:
+  /resource-servers/:
     get:
       consumes:
       - application/json
-      description: Retrieve a paginated list of audiences
+      description: Retrieve a paginated list of resource servers
       parameters:
       - default: 10
-        description: Number of audiences to return
+        description: Number of resource servers to return
         in: query
         name: limit
         type: integer
@@ -257,48 +257,49 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/entities.Audience'
+              $ref: '#/definitions/entities.ResourceServer'
             type: array
         "500":
           description: Internal Server Error
           schema: {}
-      summary: Get all audiences with pagination
+      summary: Get all resource servers with pagination
       tags:
-      - Audiences
+      - ResourceServers
     post:
       consumes:
       - application/json
-      description: Create a new audience with the provided display name and description
+      description: Create a new resource server with the provided display name and
+        description
       parameters:
-      - description: Audience creation data
+      - description: Resource server creation data
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/audience_dtos.CreateAudienceDTO'
+          $ref: '#/definitions/resource_server_dtos.CreateResourceServerDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/entities.Audience'
+            $ref: '#/definitions/entities.ResourceServer'
         "400":
           description: Bad Request
           schema: {}
         "500":
           description: Internal Server Error
           schema: {}
-      summary: Create a new audience
+      summary: Create a new resource server
       tags:
-      - Audiences
-  /audiences/{id}:
+      - ResourceServers
+  /resource-servers/{id}:
     get:
       consumes:
       - application/json
-      description: Retrieve an audience by its ID
+      description: Retrieve a resource server by its ID
       parameters:
-      - description: Audience ID
+      - description: Resource Server ID
         in: path
         name: id
         required: true
@@ -309,36 +310,36 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.Audience'
+            $ref: '#/definitions/entities.ResourceServer'
         "404":
           description: Not Found
           schema: {}
-      summary: Get audience by ID
+      summary: Get resource server by ID
       tags:
-      - Audiences
+      - ResourceServers
     put:
       consumes:
       - application/json
-      description: Update an existing audience's display name and description
+      description: Update an existing resource server's display name and description
       parameters:
-      - description: Audience ID
+      - description: Resource Server ID
         in: path
         name: id
         required: true
         type: string
-      - description: Audience update data
+      - description: Resource Server update data
         in: body
         name: body
         required: true
         schema:
-          $ref: '#/definitions/audience_dtos.UpdateAudienceDTO'
+          $ref: '#/definitions/resource_server_dtos.UpdateResourceServerDTO'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/entities.Audience'
+            $ref: '#/definitions/entities.ResourceServer'
         "400":
           description: Bad Request
           schema: {}
@@ -348,9 +349,9 @@ paths:
         "500":
           description: Internal Server Error
           schema: {}
-      summary: Update an existing audience
+      summary: Update an existing resource server
       tags:
-      - Audiences
+      - ResourceServers
   /token/:
     post:
       consumes:

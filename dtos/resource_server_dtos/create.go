@@ -1,6 +1,6 @@
-package audience_dtos
+package resource_server_dtos
 
-type CreateAudienceDTO struct {
+type CreateResourceServerDTO struct {
 	DisplayName string `json:"display_name"`
 	Description string `json:"description"`
 }
