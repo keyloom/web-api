@@ -82,3 +82,19 @@ func (e *EnvManager) GetTokenConfig() (envmanager_dtos.TokenConfig, error) {
 	}
 	return tokenConfig, nil
 }
+
+func (e *EnvManager) GetAdminUserConfig() (envmanager_dtos.AdminUserConfig, error) {
+	vars := []string{
+		"ADMIN_USER_EMAIL",
+		"ADMIN_USER_PASSWORD",
+	}
+	values, err := e.ValidateEnvs(vars)
+	if err != nil {
+		return envmanager_dtos.AdminUserConfig{}, err
+	}
+	adminUserConfig := envmanager_dtos.AdminUserConfig{
+		Email:    values[0],
+		Password: values[1],
+	}
+	return adminUserConfig, nil
+}

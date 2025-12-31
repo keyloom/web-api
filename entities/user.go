@@ -168,3 +168,22 @@ func (u *User) EmailExists(email string) bool {
 	result := client.FindOne(u.CollectionName(), bson.M{"email": email})
 	return result.Err() == nil
 }
+
+func (u *User) CreateDefaultAdminUser(migration *Migration) error {
+	envManager := &core.EnvManager{}
+	adminUserConfig, err := envManager.GetAdminUserConfig()
+	if err != nil {
+		return err
+	}
+
+	defaultAdminUser := u.CreateNew()
+	defaultAdminUser.Email = adminUserConfig.Email
+	defaultAdminUser.SetPassword(adminUserConfig.Password)
+	err = defaultAdminUser.Save()
+	if err != nil {
+		return err
+	}
+	migration.Changes = append(migration.Changes, core.MigrationChangeCreateDefaultAdminUser)
+
+	return nil
+}

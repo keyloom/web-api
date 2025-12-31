@@ -23,6 +23,9 @@ func main() {
 	docs.SwaggerInfo.BasePath = "/"
 	e.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
+	// Migration setup
+	(&controllers.MigrationController{}).RunMigrations()
+
 	// Controller registration
 	(&controllers.UserController{}).RegisterRoutes(e)
 	(&controllers.TokenController{}).RegisterRoutes(e)
