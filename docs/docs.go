@@ -491,9 +491,6 @@ const docTemplate = `{
         "entities.Application": {
             "type": "object",
             "properties": {
-                "audience": {
-                    "$ref": "#/definitions/entities.ResourceServer"
-                },
                 "client_id": {
                     "type": "string"
                 },

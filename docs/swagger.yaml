@@ -13,8 +13,6 @@ definitions:
     type: object
   entities.Application:
     properties:
-      audience:
-        $ref: '#/definitions/entities.ResourceServer'
       client_id:
         type: string
       client_secret:
