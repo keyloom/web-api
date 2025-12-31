@@ -20,7 +20,7 @@ type ResourceServer struct {
 var _ core.IEntity[ResourceServer] = (*ResourceServer)(nil)
 
 func (a *ResourceServer) CollectionName() string {
-	return "audiences"
+	return "resource-servers"
 }
 
 func (a *ResourceServer) CreateNew() *ResourceServer {
@@ -115,4 +115,20 @@ func (a *ResourceServer) Delete() error {
 	client := core.NewMongoClient()
 	_, err := client.DeleteOne(a.CollectionName(), bson.M{"_id": a.ID})
 	return err
+}
+
+func (a *ResourceServer) CreateDefaultResourceServer(migration *Migration) error {
+	defaultResourceServer := a.CreateNew()
+	defaultResourceServer.DisplayName = "Keyloom Web API"
+	defaultResourceServer.Name = "keyloom-web-api"
+	defaultResourceServer.Description = "This is the default resource server. It represents the Keyloom Web API."
+
+	err := defaultResourceServer.Save()
+	if err != nil {
+		return err
+	}
+
+	migration.Changes = append(migration.Changes, core.MigrationChangeCreateDefaultResourceServer)
+
+	return nil
 }

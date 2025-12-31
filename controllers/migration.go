@@ -43,6 +43,17 @@ func (mc *MigrationController) RunMigrations() {
 		fmt.Println("[MIGRATIONS] Default admin user created.")
 	}
 
+	// Create default resource server if not exists
+	if !slices.Contains(latestMigration.Changes, core.MigrationChangeCreateDefaultResourceServer) {
+		fmt.Println("[MIGRATIONS] No default resource server found. Creating one...")
+		resourceServerEntity := &entities.ResourceServer{}
+		err := resourceServerEntity.CreateDefaultResourceServer(latestMigration)
+		if err != nil {
+			return
+		}
+		fmt.Println("[MIGRATIONS] Default resource server created.")
+	}
+
 	fmt.Println("")
 	fmt.Println("[MIGRATIONS] Migrations completed.")
 	// Save latest migration
