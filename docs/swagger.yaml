@@ -27,6 +27,18 @@ definitions:
         type: string
       name:
         type: string
+      redirect_uris:
+        items:
+          type: string
+        type: array
+      resource_servers:
+        items:
+          $ref: '#/definitions/entities.ResourceServer'
+        type: array
+      scopes:
+        items:
+          type: string
+        type: array
       updated_at:
         type: integer
     type: object

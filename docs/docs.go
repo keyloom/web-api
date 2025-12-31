@@ -512,6 +512,24 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
+                "redirect_uris": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "resource_servers": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entities.ResourceServer"
+                    }
+                },
+                "scopes": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
                 "updated_at": {
                     "type": "integer"
                 }

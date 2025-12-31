@@ -18,11 +18,15 @@ type ClientSecret struct {
 }
 
 type Application struct {
-	core.Entity   `bson:",inline" json:",inline"`
-	Name          string         `bson:"name" json:"name"`
-	Description   string         `bson:"description" json:"description"`
-	ClientID      string         `bson:"client_id" json:"client_id"`
-	ClientSecrets []ClientSecret `bson:"client_secret" json:"client_secret"`
+	core.Entity       `bson:",inline" json:",inline"`
+	Name              string               `bson:"name" json:"name"`
+	Description       string               `bson:"description" json:"description"`
+	ClientID          string               `bson:"client_id" json:"client_id"`
+	ClientSecrets     []ClientSecret       `bson:"client_secret" json:"client_secret"`
+	RedirectURIs      []string             `bson:"redirect_uris" json:"redirect_uris"`
+	Scopes            []string             `bson:"scopes" json:"scopes"`
+	ResourceServerIDs []primitive.ObjectID `bson:"resource_server_ids" json:"-"`
+	ResourceServers   []*ResourceServer    `bson:"-" json:"resource_servers,omitempty"`
 }
 
 var _ core.IEntity[Application] = (*Application)(nil)
@@ -38,7 +42,11 @@ func (a *Application) CreateNew() *Application {
 			CreatedAt: time.Now().Unix(),
 			UpdatedAt: time.Now().Unix(),
 		},
-		ClientSecrets: []ClientSecret{},
+		ClientSecrets:     []ClientSecret{},
+		RedirectURIs:      []string{},
+		Scopes:            []string{},
+		ResourceServerIDs: []primitive.ObjectID{},
+		ResourceServers:   []*ResourceServer{},
 	}
 }
 
@@ -62,6 +70,13 @@ func (a *Application) LoadAll(top, page int) []*Application {
 		if err != nil {
 			continue
 		}
+		resourceServerEntity := &ResourceServer{}
+		stringIds := make([]string, len(app.ResourceServerIDs))
+		for i, id := range app.ResourceServerIDs {
+			stringIds[i] = id.Hex()
+		}
+		resourceServers := resourceServerEntity.LoadByIDs(stringIds)
+		app.ResourceServers = resourceServers
 		applications = append(applications, &app)
 	}
 	return applications
@@ -78,6 +93,13 @@ func (a *Application) LoadByID(id string) *Application {
 	if err != nil {
 		return nil
 	}
+	resourceServerEntity := &ResourceServer{}
+	stringIds := make([]string, len(application.ResourceServerIDs))
+	for i, id := range application.ResourceServerIDs {
+		stringIds[i] = id.Hex()
+	}
+	resourceServers := resourceServerEntity.LoadByIDs(stringIds)
+	application.ResourceServers = resourceServers
 	return &application
 }
 
@@ -99,6 +121,13 @@ func (a *Application) LoadByIDs(ids []string) []*Application {
 		if err != nil {
 			continue
 		}
+		resourceServerEntity := &ResourceServer{}
+		stringIds := make([]string, len(app.ResourceServerIDs))
+		for i, id := range app.ResourceServerIDs {
+			stringIds[i] = id.Hex()
+		}
+		resourceServers := resourceServerEntity.LoadByIDs(stringIds)
+		app.ResourceServers = resourceServers
 		applications = append(applications, &app)
 	}
 	return applications
