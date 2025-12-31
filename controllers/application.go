@@ -43,18 +43,6 @@ func (ac *ApplicationController) CreateHandler(c *gin.Context) {
 	entity := (&entities.Application{}).CreateNew()
 	entity.Name = dto.Name
 	entity.Description = dto.Description
-	audienceID, err := primitive.ObjectIDFromHex(dto.AudienceID)
-	if err != nil {
-		c.JSON(400, gin.H{"error": "Invalid audience ID"})
-		return
-	}
-	audienceEntity := (&entities.ResourceServer{}).LoadByID(dto.AudienceID)
-	if audienceEntity == nil {
-		c.JSON(404, gin.H{"error": "Audience not found"})
-		return
-	}
-	entity.AudienceID = audienceID
-	entity.ResourceServer = *audienceEntity
 	entity.ClientID = primitive.NewObjectID().Hex()
 
 	entity.Save()
