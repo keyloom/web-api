@@ -473,13 +473,9 @@ const docTemplate = `{
         "application_dtos.CreateApplicationDTO": {
             "type": "object",
             "required": [
-                "audience_id",
                 "name"
             ],
             "properties": {
-                "audience_id": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 },

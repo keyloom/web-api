@@ -1,14 +1,11 @@
 definitions:
   application_dtos.CreateApplicationDTO:
     properties:
-      audience_id:
-        type: string
       description:
         type: string
       name:
         type: string
     required:
-    - audience_id
     - name
     type: object
   entities.Application:
