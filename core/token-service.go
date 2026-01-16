@@ -37,3 +37,15 @@ func (s *TokenService) GenerateToken(
 		ExpiresAt:   expirationTime.Unix(),
 	}, nil
 }
+
+func (s *TokenService) ValidateToken(tokenString string) (*jwt.Token, error) {
+	config, err := (&EnvManager{}).GetTokenConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.SecretKey), nil
+	})
+	return token, err
+}

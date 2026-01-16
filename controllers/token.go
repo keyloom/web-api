@@ -17,6 +17,7 @@ func (tc *TokenController) RegisterRoutes(engine *gin.Engine) {
 	tokenGroup := engine.Group("/token")
 	{
 		tokenGroup.POST("/", tc.TokenDispatchHandler)
+		tokenGroup.GET("/me/validate", tc.ValidateToken)
 	}
 }
 
@@ -87,4 +88,34 @@ func (tc *TokenController) PasswordGrantHandler(c *gin.Context) {
 
 	// respond with token
 	c.JSON(http.StatusOK, token)
+}
+
+// @Summary Validate token endpoint
+// @Description Validate the provided JWT token
+// @Produce json
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} interface{}
+// @Failure 401 {object} interface{}
+// @Router /token/me/validate [get]
+// @Tags Tokens
+// @Security ApiKeyAuth
+func (tc *TokenController) ValidateToken(c *gin.Context) {
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization header is required"})
+		return
+	}
+
+	tokenString = tokenString[len("Bearer "):]
+
+	token, err := (&core.TokenService{}).ValidateToken(tokenString)
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "token is valid",
+		"payload": token,
+	})
 }

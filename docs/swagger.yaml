@@ -398,6 +398,28 @@ paths:
       summary: Token dispatch endpoint
       tags:
       - Tokens
+  /token/me/validate:
+    get:
+      description: Validate the provided JWT token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Validate token endpoint
+      tags:
+      - Tokens
   /users/:
     post:
       consumes:
