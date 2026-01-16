@@ -3,6 +3,7 @@ module github.com/keyloom/web-api
 go 1.25.4
 
 require (
+	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/swaggo/swag v1.16.6
 	golang.org/x/crypto v0.46.0
 )
@@ -32,7 +33,6 @@ require (
 	github.com/go-playground/validator/v10 v10.27.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/goccy/go-yaml v1.18.0 // indirect
-	github.com/golang-jwt/jwt/v5 v5.3.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
