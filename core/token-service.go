@@ -38,7 +38,7 @@ func (s *TokenService) GenerateToken(
 	}, nil
 }
 
-func (s *TokenService) ValidateToken(tokenString string) (*jwt.Token, error) {
+func (s *TokenService) ValidateToken(tokenString string) (*token_dtos.JWTPayload, error) {
 	config, err := (&EnvManager{}).GetTokenConfig()
 	if err != nil {
 		return nil, err
@@ -47,5 +47,22 @@ func (s *TokenService) ValidateToken(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return []byte(config.SecretKey), nil
 	})
-	return token, err
+	if err != nil || !token.Valid {
+		return nil, err
+	}
+	var payload token_dtos.JWTPayload
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return nil, err
+	}
+
+	payload.Sub = claims["sub"].(string)
+	payload.Iss = claims["iss"].(string)
+	payload.Aud = claims["aud"].(string)
+	payload.Exp = int64(claims["exp"].(float64))
+
+	payload.JWTHeader.Alg = token.Header["alg"].(string)
+	payload.JWTHeader.Typ = token.Header["typ"].(string)
+
+	return &payload, nil
 }

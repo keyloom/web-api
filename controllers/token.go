@@ -93,7 +93,7 @@ func (tc *TokenController) PasswordGrantHandler(c *gin.Context) {
 // @Summary Validate token endpoint
 // @Description Validate the provided JWT token
 // @Produce json
-// @Success 200 {object} map[string]interface{}
+// @Success 200 {object} token_dtos.JWTPayload
 // @Failure 400 {object} interface{}
 // @Failure 401 {object} interface{}
 // @Router /token/me/validate [get]
@@ -109,13 +109,10 @@ func (tc *TokenController) ValidateToken(c *gin.Context) {
 	tokenString = tokenString[len("Bearer "):]
 
 	token, err := (&core.TokenService{}).ValidateToken(tokenString)
-	if err != nil || !token.Valid {
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "token is valid",
-		"payload": token,
-	})
+	c.JSON(http.StatusOK, token)
 }

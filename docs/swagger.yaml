@@ -101,6 +101,26 @@ definitions:
       token_type:
         type: string
     type: object
+  token_dtos.JWTHeader:
+    properties:
+      alg:
+        type: string
+      typ:
+        type: string
+    type: object
+  token_dtos.JWTPayload:
+    properties:
+      aud:
+        type: string
+      exp:
+        type: integer
+      header:
+        $ref: '#/definitions/token_dtos.JWTHeader'
+      iss:
+        type: string
+      sub:
+        type: string
+    type: object
   user_dtos.CreateUserDTO:
     properties:
       confirm_password:
@@ -407,8 +427,7 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/token_dtos.JWTPayload'
         "400":
           description: Bad Request
           schema: {}

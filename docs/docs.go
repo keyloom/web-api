@@ -445,8 +445,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": true
+                            "$ref": "#/definitions/token_dtos.JWTPayload"
                         }
                     },
                     "400": {
@@ -657,6 +656,37 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "token_type": {
+                    "type": "string"
+                }
+            }
+        },
+        "token_dtos.JWTHeader": {
+            "type": "object",
+            "properties": {
+                "alg": {
+                    "type": "string"
+                },
+                "typ": {
+                    "type": "string"
+                }
+            }
+        },
+        "token_dtos.JWTPayload": {
+            "type": "object",
+            "properties": {
+                "aud": {
+                    "type": "string"
+                },
+                "exp": {
+                    "type": "integer"
+                },
+                "header": {
+                    "$ref": "#/definitions/token_dtos.JWTHeader"
+                },
+                "iss": {
+                    "type": "string"
+                },
+                "sub": {
                     "type": "string"
                 }
             }
