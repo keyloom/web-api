@@ -8,3 +8,5 @@ var RefreshTokenGrant = "refresh_token"
 // Migration change constants
 var MigrationChangeCreateDefaultAdminUser = "create:default_admin_user"
 var MigrationChangeCreateDefaultResourceServer = "create:default_resource_server"
+var MigrationChangeCreateDefaultApplication = "create:default_application"
+var MigrationChangeCreateDefaultGrant = "create:default_grant"

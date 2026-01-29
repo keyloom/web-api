@@ -11,11 +11,12 @@ import (
 )
 
 type Grant struct {
-	core.Entity `bson:",inline"`
-	Audience    string   `bson:"audience" json:"audience"`
-	Scopes      []string `bson:"scopes" json:"scopes"`
-	UserID      string   `bson:"userId" json:"-"`
-	User        *User    `bson:"-" json:"user,omitempty"`
+	core.Entity   `bson:",inline"`
+	Scopes        []string           `bson:"scopes" json:"scopes"`
+	UserID        primitive.ObjectID `bson:"userId" json:"-"`
+	User          *User              `bson:"-" json:"user,omitempty"`
+	ApplicationID primitive.ObjectID `bson:"applicationId" json:"-"`
+	Application   *Application       `bson:"-" json:"application,omitempty"`
 }
 
 // CollectionName implements core.IEntity.
@@ -84,7 +85,7 @@ func (g *Grant) LoadByID(id string) *Grant {
 	}
 
 	userEntity := &User{}
-	user := userEntity.LoadByID(grant.UserID)
+	user := userEntity.LoadByID(grant.UserID.Hex())
 	grant.User = user
 
 	return &grant
@@ -109,7 +110,7 @@ func (g *Grant) LoadByIDs(ids []string) []*Grant {
 		}
 
 		userEntity := &User{}
-		user := userEntity.LoadByID(grant.UserID)
+		user := userEntity.LoadByID(grant.UserID.Hex())
 		grant.User = user
 
 		grants = append(grants, &grant)
@@ -130,6 +131,49 @@ func (g *Grant) Save() error {
 		_, err := client.InsertOne(g.CollectionName(), g)
 		return err
 	}
+}
+
+func (g *Grant) CreateDefaultGrant(migration *Migration) error {
+	adminUserConfig, err := (&core.EnvManager{}).GetAdminUserConfig()
+	if err != nil {
+		return err
+	}
+	userEntity := &User{}
+	adminUser := userEntity.LoadByEmail(adminUserConfig.Email)
+	if adminUser == nil {
+		return nil
+	}
+
+	applicationEntity := &Application{}
+	defaultApp := applicationEntity.LoadByName("keyloom-frontend")
+	if defaultApp == nil {
+		return nil
+	}
+
+	// Check if default grant exists
+	client := core.NewMongoClient()
+	result := client.FindOne(g.CollectionName(), bson.M{
+		"userId":        adminUser.ID.Hex(),
+		"applicationId": defaultApp.ID.Hex(),
+	})
+	if result.Err() == nil {
+		// Grant already exists
+		return nil
+	}
+
+	// Create default grant
+	defaultGrant := &Grant{
+		Scopes:        []string{"read", "write", "delete"},
+		UserID:        adminUser.ID,
+		ApplicationID: defaultApp.ID,
+	}
+	err = defaultGrant.Save()
+	if err != nil {
+		return err
+	}
+	// Update migration record
+	migration.Changes = append(migration.Changes, core.MigrationChangeCreateDefaultGrant)
+	return nil
 }
 
 var _ core.IEntity[Grant] = (*Grant)(nil)

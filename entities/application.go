@@ -153,3 +153,55 @@ func (a *Application) Delete() error {
 	_, err := client.DeleteOne(a.CollectionName(), bson.M{"_id": a.ID})
 	return err
 }
+
+func (a *Application) LoadByName(name string) *Application {
+	client := core.NewMongoClient()
+	result := client.FindOne(a.CollectionName(), bson.M{"name": name})
+	if result.Err() != nil {
+		return nil
+	}
+	var application Application
+	err := result.Decode(&application)
+	if err != nil {
+		return nil
+	}
+	return &application
+}
+
+func (a *Application) CreateDefaultApplication(migration *Migration) error {
+	client := core.NewMongoClient()
+	// Check if default application exists
+	result := client.FindOne(a.CollectionName(), bson.M{"name": "keyloom-frontend"})
+	if result.Err() == nil {
+		// Default application already exists
+		return nil
+	}
+	// Create default application
+	defaultApp := a.CreateNew()
+	defaultApp.Name = "keyloom-frontend"
+	defaultApp.Description = "Default Keyloom Frontend Application"
+	defaultApp.ClientID = "keyloom-frontend-client-id"
+	defaultApp.RedirectURIs = []string{
+		"http://localhost:3000/callback",
+		"http://localhost:3000/redirect",
+	}
+	defaultApp.Scopes = []string{
+		"keyloom:view:resource-servers",
+		"keyloom:manage:resource-servers",
+		"keyloom:view:applications",
+		"keyloom:manage:applications",
+		"keyloom:view:users",
+		"keyloom:manage:users",
+		"keyloom:view:grants",
+		"keyloom:manage:grants",
+	}
+
+	err := defaultApp.Save()
+	if err != nil {
+		return err
+	}
+
+	// Record migration change
+	migration.Changes = append(migration.Changes, core.MigrationChangeCreateDefaultApplication)
+	return nil
+}

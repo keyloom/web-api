@@ -54,6 +54,28 @@ func (mc *MigrationController) RunMigrations() {
 		fmt.Println("[MIGRATIONS] Default resource server created.")
 	}
 
+	// Create default application if not exists
+	if !slices.Contains(latestMigration.Changes, core.MigrationChangeCreateDefaultApplication) {
+		fmt.Println("[MIGRATIONS] No default application found. Creating one...")
+		applicationEntity := &entities.Application{}
+		err := applicationEntity.CreateDefaultApplication(latestMigration)
+		if err != nil {
+			return
+		}
+		fmt.Println("[MIGRATIONS] Default application created.")
+	}
+
+	// Create default grant if not exists
+	if !slices.Contains(latestMigration.Changes, core.MigrationChangeCreateDefaultGrant) {
+		fmt.Println("[MIGRATIONS] No default grant found. Creating one...")
+		grantEntity := &entities.Grant{}
+		err := grantEntity.CreateDefaultGrant(latestMigration)
+		if err != nil {
+			return
+		}
+		fmt.Println("[MIGRATIONS] Default grant created.")
+	}
+
 	fmt.Println("")
 	fmt.Println("[MIGRATIONS] Migrations completed.")
 	// Save latest migration
